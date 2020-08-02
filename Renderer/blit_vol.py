@@ -2,7 +2,15 @@ import threading
 import ctypes
 import numpy as np
 import time
-from mock_driver import init_voxels,cleanup_voxels,set_voxel_brightness,GRID_SHAPE
+
+## Select the respective driver from here ##
+from drivers import mock_driver as driver
+
+GRID_SHAPE            = driver.GRID_SHAPE
+
+init_voxels           = driver.init_voxels
+cleanup_voxels        = driver.cleanup_voxels
+set_voxel_brightness  = driver.set_voxel_brightness
 
 class voxels_screen(threading.Thread): 
 	def __init__(self): 
