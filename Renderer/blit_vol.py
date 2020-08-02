@@ -1,62 +1,51 @@
+import threading
+import ctypes
 import numpy as np
-import RPi.GPIO as GPIO
 import time
+from mock_driver import init_voxels,cleanup_voxels,set_voxel_brightness,GRID_SHAPE
 
-# These are the pin numbers written on the board.
-led_pins = np.array([[[37,35], [33,31]] , [[29,32] , [23,21]]])
+class voxels_screen(threading.Thread): 
+	def __init__(self): 
+		threading.Thread.__init__(self) 
+		self.frame_buffer = np.zeros(GRID_SHAPE)
 
-frame_buffer = np.zeros(led_pins.shape)
+		self._blit_run = False
 
-def init_voxels():
-	global led_pins
+	def run(self):
+		self._blit_run = True
+		init_voxels()
 
-	GPIO.setmode(GPIO.BOARD)
+		while self._blit_run :
+			self.blit_volume()
 
-	for pin in led_pins.flatten():
-			GPIO.setup(pin, GPIO.OUT)
-			#Set Led Off Initially
-			GPIO.output(pin, GPIO.LOW)
-
-def cleanup_voxels():
-	GPIO.cleanup()
-
-def blit_volume():
-	global frame_buffer,led_pins
-
-	h,w,d = frame_buffer.shape
-
-	for i in range(h):
-		for j in range(w):
-			for k in range(d):
-				if frame_buffer[i][j][k] <= 0:
-					GPIO.output(led_pins[i][j][k], GPIO.LOW)
-				else:
-					GPIO.output(led_pins[i][j][k], GPIO.HIGH)
-						
-def blit_volume_loop():
-	global frame_buffer,led_pins
-	init_voxels()
-
-	h,w,d = frame_buffer.shape
-
-	try:
-		while True:
-			for i in range(h):
-				for j in range(w):
-					for k in range(d):
-						if frame_buffer[i][j][k] <= 0:
-							GPIO.output(led_pins[i][j][k], GPIO.LOW)
-						else:
-							GPIO.output(led_pins[i][j][k], GPIO.HIGH)
-						
-	except KeyboardInterrupt:
-		pass
-	finally:
 		cleanup_voxels()
 
-def swap_buffer(new_buffer):
-	global frame_buffer
+	def start_display(self):
+		self.start()
 
-	new_buffer , frame_buffer = frame_buffer , new_buffer
+	def stop_display(self):
+		self._blit_run = False
+		self.join()
 
-	return new_buffer
+
+	def blit_volume(self):
+
+		h,w,d = self.frame_buffer.shape
+
+		for i in range(h):
+			for j in range(w):
+				for k in range(d):
+					set_voxel_brightness((i,j,k),self.frame_buffer[i][j][k])
+
+	def update_frame_buffer(self,new_buffer):
+
+		h,w,d = self.frame_buffer.shape
+
+		for i in range(h):
+			for j in range(w):
+				for k in range(d):
+						self.frame_buffer[i,j,k] = new_buffer[i,j,k]
+
+	def swap_frame_buffer(self,new_buffer):
+
+		self.frame_buffer , new_buffer = new_buffer , self.frame_buffer

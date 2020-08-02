@@ -1,18 +1,24 @@
-import threading
 import numpy as np
-from blit_vol import blit_volume_loop,swap_buffer,frame_buffer
+from time import sleep
 
-def update_frame():
-	pattern = np.random.randint(0,2,frame_buffer.shape)
-	swap_buffer(pattern)
-	sleep(1)
+from blit_vol import voxels_screen,GRID_SHAPE
 
+def update_frame(VS):
+	pattern = np.random.randint(0,2,GRID_SHAPE) # Random image
+	VS.swap_frame_buffer(pattern)
  
-if __name__ == "__main__":
+def main():
+
 	# creating thread for voxel update from framebuffer
-	t_blit_volume_loop = threading.Thread(target=blit_volume_loop)
+	VS = voxels_screen()
+	VS.start_display()
 
 	while True:
-		update_frame()
+		try:
+			update_frame(VS)
+		except:
+			break
+	VS.stop_display()
 
-	t_blit_volume_loop.join()
+if __name__ == '__main__':
+	main()

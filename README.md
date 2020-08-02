@@ -1,4 +1,4 @@
-# 4x4 3D LED Cube
+# 4x4x4 3D LED Cube
 
 ## Requirements
 
