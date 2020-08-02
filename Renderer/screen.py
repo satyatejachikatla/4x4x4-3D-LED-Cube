@@ -29,9 +29,11 @@ class voxels_screen(threading.Thread):
 		cleanup_voxels()
 
 	def start_display(self):
+		print('Starting Screen Display')
 		self.start()
 
 	def stop_display(self):
+		print('Stoping Screen Display')
 		self._blit_run = False
 		self.join()
 
