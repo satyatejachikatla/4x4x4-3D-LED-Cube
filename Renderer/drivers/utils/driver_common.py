@@ -21,7 +21,7 @@ def index_to_pin_out(voxel_details,decoder_details):
 	if brightness <= 0 :
 		return decoder_input , select_decoder
 
-	acc = 1 << h * W +  w
+	acc = 1 << (h * W +  w)
 
 	curr_decoder = 0
 
