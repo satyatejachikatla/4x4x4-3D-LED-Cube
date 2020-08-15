@@ -39,7 +39,7 @@ class ShiftRegister():
 		count = 0 
 		while data:
 			self.shift_bit(data&1)
-			data >>= 1
+			data = data >> 1
 			count += 1
 		if count < 8:
 			self.shift_bit(0)
@@ -50,23 +50,31 @@ def init_voxels():
 	global s1,s2
 
 	GPIO.setmode(GPIO.BOARD)
-	s1 = ShiftRegister(15,13,7)
-	s2 = ShiftRegister(22,18,16)
+	s2 = ShiftRegister(15,13,7)
+	s1 = ShiftRegister(22,18,16)
 
 def blit_voxels():
 	global VOXEL_BUFFER
-	h,w,d = VOXEL_BUFFER.shape
+	d,h,w = VOXEL_BUFFER.shape
 
 	for i in range(d):
 		data = 0
-		for b in VOXEL_BUFFER[:,:,i].flatten():
-			if b > 0:
-				data |= 1
-			else:
-				data |= 0
-			data <<= 1
-		s1.send_data_8_bit(data & 0x00FF)
-		s2.send_data_8_bit(data & 0xFF00 >> 8)
+		#data_str = ''
+		for j in range(h):
+			for k in range(w):
+				b = VOXEL_BUFFER[i,j,k]
+				data = data << 1
+				if b > 0:
+					data |= 1
+				else:
+					data |= 0
+				#data_str += str(int(b))
+		s1.send_data_8_bit((data & 0x00FF))
+		s2.send_data_8_bit((data & 0xFF00) >> 8)
+		#print('s1',hex(data & 0x00FF))
+		#print('s2',hex((data & 0xFF00) >> 8))
+		#print('Data',data_str)
+
 
 def swap_frame_buffer(new_buffer):
 	global VOXEL_BUFFER
