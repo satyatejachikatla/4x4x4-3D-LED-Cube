@@ -23,16 +23,19 @@ class ShiftRegister():
 		GPIO.output(self.latch_pin, GPIO.LOW)
 		GPIO.output(self.data_pin, GPIO.LOW)
 
-	def shift_bit(data,self):
-		GPIO.output(self.data_pin, data)
+	def shift_bit(self,data):
+		if data > 0 :
+			GPIO.output(self.data_pin, GPIO.HIGH)
+		else:
+			GPIO.output(self.data_pin, GPIO.LOW)
 		GPIO.output(self.shift_pin, GPIO.HIGH)
 		GPIO.output(self.shift_pin, GPIO.LOW)	
 
-	def latch_output(0self):
+	def latch_output(self):
 		GPIO.output(self.latch_pin, GPIO.HIGH)
 		GPIO.output(self.latch_pin, GPIO.LOW)	
 
-	def send_data_8_bit(data):
+	def send_data_8_bit(self,data):
 		count = 0 
 		while data:
 			self.shift_bit(data&1)
@@ -41,7 +44,7 @@ class ShiftRegister():
 		if count < 8:
 			self.shift_bit(0)
 			count += 1
-		self.atch_output()
+		self.latch_output()
 
 def init_voxels():
 	global s1,s2
@@ -51,6 +54,7 @@ def init_voxels():
 	s2 = ShiftRegister(22,18,16)
 
 def blit_voxels():
+	global VOXEL_BUFFER
 	h,w,d = VOXEL_BUFFER.shape
 
 	for i in range(d):
@@ -61,10 +65,11 @@ def blit_voxels():
 			else:
 				data |= 0
 			data <<= 1
-		s1.send_data_8_bit((data & 0x00FF))
-		s2.send_data_8_bit((data & 0xFF00) >> 8)
+		s1.send_data_8_bit(data & 0x00FF)
+		s2.send_data_8_bit(data & 0xFF00 >> 8)
 
 def swap_frame_buffer(new_buffer):
+	global VOXEL_BUFFER
 
 	VOXEL_BUFFER , new_buffer = new_buffer , VOXEL_BUFFER
 
