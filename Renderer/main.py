@@ -1,10 +1,37 @@
 import numpy as np
 from time import sleep
-from drivers.mock_driver import mock_driver as driver
+from drivers.hw_driver import hw_driver as driver
 from screen import voxels_screen
+frame_delay = 1 
+def clear_frame(VS):
+	pattern = np.zeros(VS.driver.GRID_SHAPE)
+	VS.driver.swap_frame_buffer(pattern)
+def o_frame_1(VS):
+	pattern = np.array(
+[
 
-def update_frame(VS):
-	pattern = np.random.randint(0,2,VS.driver.GRID_SHAPE) # Random image
+[[0 , 0 , 0 , 1],
+[1 , 0 , 0 , 1],
+[0 , 0 , 0 , 1],
+[1 , 0 , 0 , 1]]
+,
+[[0 , 0 , 0 , 1],
+[1 , 0 , 0 , 1],
+[0 , 0 , 0 , 1],
+[1 , 0 , 0 , 1]]
+,
+[[0 , 0 , 0 , 1],
+[1 , 0 , 0 , 1],
+[0 , 0 , 0 , 1],
+[1 , 0 , 0 , 1]]
+,
+[[0 , 0 , 0 , 1],
+[1 , 0 , 0 , 1],
+[0 , 0 , 0 , 1],
+[1 , 0 , 0 , 1]]
+]
+
+)
 	VS.driver.swap_frame_buffer(pattern)
 
 def main():
@@ -14,9 +41,14 @@ def main():
 
 	while True:
 		try:
-			update_frame(VS)
+			o_frame_1(VS)
+			sleep(frame_delay)
+		except Exception as e:
+			print(e)
+			break
 		except:
 			break
+
 	VS.stop_display()
 
 if __name__ == '__main__':

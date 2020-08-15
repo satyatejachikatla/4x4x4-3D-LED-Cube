@@ -40,20 +40,17 @@ class ShiftRegister():
 
 	def send_data_8_bit(self,data):
 		count = 0 
-		while data:
+		while count < 8:
 			self.shift_bit(data&1)
 			data = data >> 1
-			count += 1
-		if count < 8:
-			self.shift_bit(0)
 			count += 1
 
 def init_voxels():
 	global s1,s2,latch_second_request,latch_request
 
 	GPIO.setmode(GPIO.BOARD)
-	s1 = ShiftRegister(15,13,7)
-	s2 = ShiftRegister(22,18,16)
+	s2 = ShiftRegister(15,13,7)
+	s1 = ShiftRegister(22,18,16)
 
 	latch_request = False
 	latch_second_request = False
@@ -73,10 +70,9 @@ def blit_voxels():
 				else:
 					data |= 0
 
-		#
 		s1.send_data_8_bit((data & 0x00FF))
 		s2.send_data_8_bit((data & 0xFF00) >> 8)
-
+		#print(bin(data))
 	# Latch mechanisum
 	if latch_second_request:
 		s1.latch_output()
