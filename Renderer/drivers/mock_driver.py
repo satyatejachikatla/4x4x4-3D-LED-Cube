@@ -23,6 +23,19 @@ decoder_details = {
 BLIT_VOL_FILE = None
 MOCK_VOXELS   = None
 
+def blit_voxels():
+	global BLIT_VOL_FILE,MOCK_VOXELS
+	h,w,d = MOCK_VOXELS.shape
+
+	for i in range(h):
+		for j in range(w):
+			for k in range(d):
+				set_voxel_brightness((i,j,k),MOCK_VOXELS[i][j][k])
+
+def swap_frame_buffer(new_buffer):
+	global BLIT_VOL_FILE,MOCK_VOXELS
+	MOCK_VOXELS , new_buffer = new_buffer , MOCK_VOXELS
+
 def init_voxels():
 	global BLIT_VOL_FILE,MOCK_VOXELS
 
@@ -54,3 +67,13 @@ def cleanup_voxels():
 	global BLIT_VOL_FILE
 	BLIT_VOL_FILE.close()
 	os.remove(BLIT_VOL_FILE_NAME)
+
+class mock_driver():
+	def __init__(self):
+		self.GRID_SHAPE = GRID_SHAPE
+		self.swap_frame_buffer = swap_frame_buffer
+
+		self.init_voxels = init_voxels
+		self.blit_voxels = blit_voxels
+		self.cleanup_voxels = cleanup_voxels
+
