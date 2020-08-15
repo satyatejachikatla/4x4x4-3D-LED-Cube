@@ -9,6 +9,8 @@ VOXEL_BUFFER = np.zeros(GRID_SHAPE)
 s1 = None
 s2 = None
 
+latch_request = False
+
 class ShiftRegister():
 	def __init__(self,shift_pin,latch_pin,data_pin):
 		self.shift_pin = shift_pin
@@ -52,8 +54,10 @@ def init_voxels():
 	s2 = ShiftRegister(15,13,7)
 	s1 = ShiftRegister(22,18,16)
 
+	latch_request = False
+
 def blit_voxels():
-	global VOXEL_BUFFER,s1,s2
+	global VOXEL_BUFFER,s1,s2,latch_request
 	d,h,w = VOXEL_BUFFER.shape
 
 	for i in range(d):
@@ -70,13 +74,17 @@ def blit_voxels():
 				#data_str += str(int(b))
 		s1.send_data_8_bit((data & 0x00FF))
 		s2.send_data_8_bit((data & 0xFF00) >> 8)
+		if latch_request:
+			s1.latch_output()
+			s2.latch_output()
+			latch_request = False
 		#print('s1',hex(data & 0x00FF))
 		#print('s2',hex((data & 0xFF00) >> 8))
 		#print('Data',data_str)
 
 
 def swap_frame_buffer(new_buffer):
-	global VOXEL_BUFFER,s1,s2
+	global VOXEL_BUFFER,s1,s2,latch_request
 	VOXEL_BUFFER , new_buffer = new_buffer , VOXEL_BUFFER
 	#h,w,d = VOXEL_BUFFER.shape
 
@@ -84,10 +92,7 @@ def swap_frame_buffer(new_buffer):
 	#	for j in range(h):
 	#		for k in range(w):
 	#			VOXEL_BUFFER[i,j,k]=new_buffer[i][j][k]
-	if s1 != None:
-		s1.latch_output()
-	if s2 != None:
-		s2.latch_output()
+	latch_request = True
 
 def cleanup_voxels():
 	GPIO.cleanup()
