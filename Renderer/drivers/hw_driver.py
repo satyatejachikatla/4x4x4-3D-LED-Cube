@@ -10,6 +10,7 @@ s1 = None
 s2 = None
 
 latch_request = False
+latch_second_request = False
 
 class ShiftRegister():
 	def __init__(self,shift_pin,latch_pin,data_pin):
@@ -48,21 +49,21 @@ class ShiftRegister():
 			count += 1
 
 def init_voxels():
-	global s1,s2
+	global s1,s2,latch_second_request,latch_request
 
 	GPIO.setmode(GPIO.BOARD)
-	s2 = ShiftRegister(15,13,7)
-	s1 = ShiftRegister(22,18,16)
+	s1 = ShiftRegister(15,13,7)
+	s2 = ShiftRegister(22,18,16)
 
 	latch_request = False
+	latch_second_request = False
 
 def blit_voxels():
-	global VOXEL_BUFFER,s1,s2,latch_request
+	global VOXEL_BUFFER,s1,s2,latch_request,latch_second_request
 	d,h,w = VOXEL_BUFFER.shape
 
 	for i in range(d):
 		data = 0
-		#data_str = ''
 		for j in range(h):
 			for k in range(w):
 				b = VOXEL_BUFFER[i,j,k]
@@ -71,27 +72,23 @@ def blit_voxels():
 					data |= 1
 				else:
 					data |= 0
-				#data_str += str(int(b))
+
+		#
 		s1.send_data_8_bit((data & 0x00FF))
 		s2.send_data_8_bit((data & 0xFF00) >> 8)
-		if latch_request:
-			s1.latch_output()
-			s2.latch_output()
-			latch_request = False
-		#print('s1',hex(data & 0x00FF))
-		#print('s2',hex((data & 0xFF00) >> 8))
-		#print('Data',data_str)
 
+	# Latch mechanisum
+	if latch_second_request:
+		s1.latch_output()
+		s2.latch_output()
+		latch_second_request = False		
+	if latch_request:
+		latch_request = False
+		latch_second_request = True
 
 def swap_frame_buffer(new_buffer):
 	global VOXEL_BUFFER,s1,s2,latch_request
 	VOXEL_BUFFER , new_buffer = new_buffer , VOXEL_BUFFER
-	#h,w,d = VOXEL_BUFFER.shape
-
-	#for i in range(d):
-	#	for j in range(h):
-	#		for k in range(w):
-	#			VOXEL_BUFFER[i,j,k]=new_buffer[i][j][k]
 	latch_request = True
 
 def cleanup_voxels():

@@ -5,8 +5,7 @@
 * Led (Blue looks good)
 * Resistors (resistance changes with the LED choosen)
 * BC547 Transistors
-* 74LS138 Decoders
-* 20 pin Female addapter
+* 74HC595 Decoders
 
 * Jumper wires (Male-Male , Male-Female)
 * Solid Core Hookup wires
@@ -15,7 +14,6 @@
 * Soldering equipment
 
 * 2 Breadboards
-* Zero PCB
 * Thermocol sheet
 
 * Any Controller of Choise to code
@@ -52,6 +50,6 @@
 * Also attach a German silver wire on the bottom for all the LED vertical lines.
 * Connect them to a Zero PCB and attach a Female adapter.
 
+### References
 
-
-
+* https://www.instructables.com/id/Raspberry-Pi-4x4x4-LED-Cube/
