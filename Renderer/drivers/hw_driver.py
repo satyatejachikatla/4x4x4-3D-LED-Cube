@@ -44,7 +44,6 @@ class ShiftRegister():
 		if count < 8:
 			self.shift_bit(0)
 			count += 1
-		self.latch_output()
 
 def init_voxels():
 	global s1,s2
@@ -54,7 +53,7 @@ def init_voxels():
 	s1 = ShiftRegister(22,18,16)
 
 def blit_voxels():
-	global VOXEL_BUFFER
+	global VOXEL_BUFFER,s1,s2
 	d,h,w = VOXEL_BUFFER.shape
 
 	for i in range(d):
@@ -77,9 +76,18 @@ def blit_voxels():
 
 
 def swap_frame_buffer(new_buffer):
-	global VOXEL_BUFFER
-
+	global VOXEL_BUFFER,s1,s2
 	VOXEL_BUFFER , new_buffer = new_buffer , VOXEL_BUFFER
+	#h,w,d = VOXEL_BUFFER.shape
+
+	#for i in range(d):
+	#	for j in range(h):
+	#		for k in range(w):
+	#			VOXEL_BUFFER[i,j,k]=new_buffer[i][j][k]
+	if s1 != None:
+		s1.latch_output()
+	if s2 != None:
+		s2.latch_output()
 
 def cleanup_voxels():
 	GPIO.cleanup()
