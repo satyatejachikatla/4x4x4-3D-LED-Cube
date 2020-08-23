@@ -8,9 +8,7 @@ VOXEL_BUFFER = np.zeros(GRID_SHAPE)
 
 s1 = None
 s2 = None
-
-latch_request = False
-latch_second_request = False
+ls = None
 
 class ShiftRegister():
 	def __init__(self,shift_pin,latch_pin,data_pin):
@@ -45,18 +43,32 @@ class ShiftRegister():
 			data = data >> 1
 			count += 1
 
+class LayerSelector():
+	def __init__(self,layer_pins):
+		self.layer_pins = layer_pins
+
+		for pin in self.layer_pins:
+			GPIO.setup(pin, GPIO.OUT)
+			GPIO.output(pin, GPIO.LOW)
+
+	def select_layer(self,layer_index):
+		GPIO.output(self.layer_pins[layer_index-1], GPIO.LOW)
+		GPIO.output(self.layer_pins[layer_index], GPIO.HIGH)
+
 def init_voxels():
-	global s1,s2,latch_second_request,latch_request
+	global s1,s2,latch_second_request,latch_request,ls
 
 	GPIO.setmode(GPIO.BOARD)
 	s2 = ShiftRegister(15,13,7)
 	s1 = ShiftRegister(22,18,16)
 
+	ls = LayerSelector([37,35,33,31])
+
 	latch_request = False
 	latch_second_request = False
 
 def blit_voxels():
-	global VOXEL_BUFFER,s1,s2,latch_request,latch_second_request
+	global VOXEL_BUFFER,s1,s2,latch_request,latch_second_request,ls
 	d,h,w = VOXEL_BUFFER.shape
 
 	for i in range(d):
@@ -72,15 +84,10 @@ def blit_voxels():
 
 		s1.send_data_8_bit((data & 0x00FF))
 		s2.send_data_8_bit((data & 0xFF00) >> 8)
-		#print(bin(data))
-	# Latch mechanisum
-	if latch_second_request:
+
+		ls.select_layer(i)
 		s1.latch_output()
 		s2.latch_output()
-		latch_second_request = False		
-	if latch_request:
-		latch_request = False
-		latch_second_request = True
 
 def swap_frame_buffer(new_buffer):
 	global VOXEL_BUFFER,s1,s2,latch_request
