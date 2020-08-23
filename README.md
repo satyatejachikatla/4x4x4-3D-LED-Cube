@@ -40,7 +40,7 @@
 * Connect Side Vertically to connect all Horizontal Lines using two German silver wires.
 * Manufacture such 4 layers.
 
-![Layers](https://github.com/turrentrock/4x4x4-3D-LED-Cube/master/res/Layers.jpeg)
+![Layers](https://raw.githubusercontent.com/turrentrock/4x4x4-3D-LED-Cube/master/res/Layers.jpeg)
 
 ### 4. Stacking Layers
 
@@ -50,7 +50,7 @@
 * For the next layer take aid of some support to hold it at height and solder the Anods to the Vertical wires.
 * Do it for the next layers as well.
 
-![Layers_stacking](https://github.com/turrentrock/4x4x4-3D-LED-Cube/master/res/Layers_assembled.jpeg)
+![Layers_stacking](https://raw.githubusercontent.com/turrentrock/4x4x4-3D-LED-Cube/master/res/Layers_assembled.jpeg)
 
 ### 5. Circute layout
 
@@ -62,11 +62,11 @@
 * 4 cathode layers go into a transistor for the layer selection logic.
 * Resistors to be placed where the current needs to be limited for the LEDs and transistors.
 
-![CircutieLayout](https://github.com/turrentrock/4x4x4-3D-LED-Cube/master/res/Cube_Connections.jpeg)
+![CircutieLayout](https://raw.githubusercontent.com/turrentrock/4x4x4-3D-LED-Cube/master/res/Cube_Connections.jpeg)
 
 ### THE END
 
-![LedsGlowing](https://github.com/turrentrock/4x4x4-3D-LED-Cube/master/res/Leds_Glowing.jpeg)
+![LedsGlowing](https://raw.githubusercontent.com/turrentrock/4x4x4-3D-LED-Cube/master/res/Leds_Glowing.jpeg)
 
 ### References
 
