@@ -62,7 +62,7 @@ def init_voxels():
 	s2 = ShiftRegister(15,13,7)
 	s1 = ShiftRegister(22,18,16)
 
-	ls = LayerSelector([37,35,33,31])
+	ls = LayerSelector([35,33,31,29])
 
 	latch_request = False
 	latch_second_request = False

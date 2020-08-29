@@ -6,6 +6,9 @@ frame_delay = 1
 def clear_frame(VS):
 	pattern = np.zeros(VS.driver.GRID_SHAPE)
 	VS.driver.swap_frame_buffer(pattern)
+def fill_frame(VS):
+	pattern = np.ones(VS.driver.GRID_SHAPE)
+	VS.driver.swap_frame_buffer(pattern)
 def o_frame_1(VS):
 	pattern = np.array(
 [
@@ -41,7 +44,11 @@ def main():
 
 	while True:
 		try:
+			clear_frame(VS)
+			sleep(frame_delay)
 			o_frame_1(VS)
+			sleep(frame_delay)
+			fill_frame(VS)
 			sleep(frame_delay)
 		except Exception as e:
 			print(e)
